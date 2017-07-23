@@ -1,9 +1,13 @@
 package com.mutouyizhi.myweather;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,6 +72,7 @@ public class WeatherFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (mCurrentLevel == LEVEL_PROVINCE) {
@@ -76,6 +81,20 @@ public class WeatherFragment extends Fragment {
                 } else if (mCurrentLevel == LEVEL_CITY) {
                     mSelectedCity = mCities.get(position);
                     queryCounties();
+                } else if (mCurrentLevel == LEVEL_COUNTY) {
+                    String weatherId = mCounties.get(position).getWeatherId();
+                    if (getActivity() instanceof MainActivity) {
+                        Intent intent = new Intent(getContext(), WeatherActivity.class);
+                        intent.putExtra("weather", weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    } else if (getActivity() instanceof WeatherActivity){
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.mDrawerLayout.closeDrawers();
+                        activity.weatherId = weatherId;
+                        activity.mRefreshLayout.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
                 }
             }
         });

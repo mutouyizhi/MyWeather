@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="weatherMainBackground">@android:color/holo_blue_bright</color>
     <color name="titleColor">@android:color/white</color>
+
 </resources>
